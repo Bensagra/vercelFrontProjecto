@@ -146,7 +146,7 @@ async function requestComputer() {
     if (occupation === "Estudiante") {
         console.log(
             JSON.stringify({
-                userId: usuario.id,
+                userId: usuario,
                 cartId: parseInt(classrooms.value),
             })
         );
@@ -159,7 +159,7 @@ async function requestComputer() {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    userId: usuario.id,
+                    userId: usuario,
                     cartId: parseInt(classrooms.value),
                 }),
             }
