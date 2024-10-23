@@ -85,6 +85,8 @@ function showTab(tabId) {
             if (response.status === 200) {
                 showSuccess("Registro exitoso. Redirigiendo...");
                 sessionStorage.setItem("userId", data.id);
+                sessionStorage.setItem("occupation", data.occupation)
+
                 sessionStorage.setItem("profilePhoto", data.avatar);
                 setTimeout(() => {
                     location.href = "../selectorItems.html";
