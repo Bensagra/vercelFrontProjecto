@@ -1,5 +1,6 @@
 import { getCarros } from "./repository.js";
-let usuario = sessionStorage.getItem("userId");
+let usuario = (sessionStorage.getItem("userId"));
+let occupation = sessionStorage.getItem("occupation")
 if (!usuario) {
     window.location.href = "accesodenegado.html";
 }
@@ -105,7 +106,7 @@ async function updateClassroomsOptions(piso, edificio) {
         options.forEach(room => {
             let opt = document.createElement("option");
             opt.value = room.id;
-            opt.textContent = `Room number:${room.room.roomNumber}  id:${room.room.id}`; // El número de aula
+            opt.textContent = room.room.roomNumber; // El número de aula
             classrooms.appendChild(opt);
         });
         classrooms.classList.remove("disactive");
@@ -142,40 +143,72 @@ confirmButton.addEventListener("click", () => requestComputer());
 returnButton.addEventListener("click", () => returnComputer());
 
 async function requestComputer() {
-    console.log(
-        JSON.stringify({
-            userId: usuario,
-            cartId: parseInt(classrooms.value),
-        })
-    );
-    const response = await fetch(
-        `https://secure-track-db.vercel.app/computers/request`,
-        {
-            method: "POST",
-            mode: "cors",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
+    if (occupation === "Estudiante") {
+        console.log(
+            JSON.stringify({
+                userId: usuario.id,
+                cartId: parseInt(classrooms.value),
+            })
+        );
+        const response = await fetch(
+            `https://secure-track-db.vercel.app/computers/request`,
+            {
+                method: "POST",
+                mode: "cors",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    userId: usuario.id,
+                    cartId: parseInt(classrooms.value),
+                }),
+            }
+        );
+        const res = JSON.stringify(await response.json());
+        console.log(await res);
+        if (response.status == 200) {
+            sessionStorage.setItem("correctKey", res);
+            location.href = "../qr.html";
+        }
+    }else if(occupation === "Profesor"){
+        console.log(
+            JSON.stringify({
                 userId: usuario,
                 cartId: parseInt(classrooms.value),
-            }),
+            })
+        );
+        const response = await fetch(
+            `https://secure-track-db.vercel.app/professor/request`,
+            {
+                method: "POST",
+                mode: "cors",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    userId: usuario,
+                    cartId: parseInt(classrooms.value),
+                }),
+            }
+        );
+        const res = JSON.stringify(await response.json());
+        console.log(await res);
+        if (response.status == 200) {
+            sessionStorage.setItem("correctKey", res);
+            location.href = "../qr.html";
         }
-    );
+    }else{
+        console.log("No")
+    }
     
 
-    const res = JSON.stringify(await response.json());
-    console.log(await res);
-    if (response.status == 200) {
-        sessionStorage.setItem("correctKey", res);
-        location.href = "../qr.html";
-    }
+
 }
 
 async function returnComputer() {
     console.log(
         JSON.stringify({
-            userId: usuario,
+            userId: usuario.id,
             cartId: parseInt(classrooms.value),
         })
     );
@@ -188,7 +221,7 @@ async function returnComputer() {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                userId: usuario,
+                userId: usuario.id,
                 cartId: parseInt(classrooms.value),
             }),
         }
