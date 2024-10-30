@@ -9,7 +9,8 @@ const username = sessionStorage.getItem("username")
 const p_user = document.getElementById("dni")
 const nfc = document.getElementById("nfc")
 const user = sessionStorage.getItem("userId")
-const datalist = document.getElementsByTagName("datalist")
+const datalist = document.getElementById("transacciones")
+
 
     if (profilePhotoURL) {
         profileImage.src = `./img/${profilePhotoURL}.jpg`; 
@@ -62,20 +63,31 @@ location.href="./qr.html"
 
  async function cargarTransacciones() {
     try {
-
-        const response = await fetch('https://secure-track-db.vercel.app/user/transactions',{
-            method: "POST",
+        const response = await fetch('https://secure-track-db.vercel.app/user/transactions', {
+            method: "GET",
             mode: "cors",
-            body:"userId",
+            body: JSON.stringify({ userId: user }),
             headers: {
                 "Content-Type": "application/json",
             },
-           
-         }); 
+        });
         const transacciones = await response.json();
-        console.log(transacciones)
-       
+        const datalist = document.getElementById("transacciones");
+        datalist.innerHTML = '';
+
+        if (!transacciones === null) {
+            transacciones.forEach(transaccion => {
+                const transaccionP = document.createElement("p");
+                transaccionP.classList.add("transaction-item"); 
+                transaccionP.textContent = `hora: ${transaccion.data.token.createdAt} - Aula: ${data.token.cart.room.roomNumber}`; 
+                datalist.appendChild(transaccionP);
+            });
+        } else {
+           console.log("no hay") 
+        }
+      
+
     } catch (error) {
-        location.href("./error500.html")
+        location.href = "./error500.html";
     }
 }

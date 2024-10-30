@@ -93,7 +93,8 @@ async function updateClassroomsOptions(piso, edificio) {
         options.forEach(room => {
             let opt = document.createElement("option");
             opt.value = room.id;
-            opt.textContent = room.room.roomNumber; // El número de aula
+            // opt.textContent = room.room.roomNumber;
+            opt.textContent = `ID: ${room.id} - Aula: ${room.room.roomNumber}`; 
             classrooms.appendChild(opt);
         });
         classrooms.classList.remove("disactive");
@@ -223,7 +224,9 @@ async function initializeClassrooms() {
         console.log("Aulas de Libertador:", libertador);
 
     } catch (error) {
-        location.href("./error500.html")
+        location.href = "./error500.html"
+
+      
     } finally {
         loadingScreen.style.display = "none";
     }
