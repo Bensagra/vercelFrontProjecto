@@ -2,39 +2,38 @@ const text = document.getElementById("text");
 const res = sessionStorage.getItem("correctKey");
 const user = sessionStorage.getItem("userId");
 const qr = document.getElementById("qr");
-const timerDisplay = document.getElementById("time");
+const timerDisplay = document.getElementById("time"); 
 const parsedRes = JSON.parse(user);
 const finalizar = document.getElementById("finalizar")
-const modal = document.getElementById("modal")
-const closeModal = document.getElementById("closeModal")
-const modalmes = document.getElementById("modal-message")
+const modal= document.getElementById("modal")
+const closeModal= document.getElementById("closeModal")
 
-finalizar.addEventListener("click", async () => {
 
-    let data = await fetch(`https://secure-track-db.vercel.app/verificar`, {
+finalizar.addEventListener("click",async()=>{
+
+    let data = await fetch(`https://secure-track-db.vercel.app/verificar`,{
         method: "POST",
         mode: "cors",
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({
+        body:JSON.stringify({
             token: (JSON.parse(res).tokenId)
         })
-    })
+     })
 
-    if (await data.status === 200) {
+     if (await data.status === 200) {
         sessionStorage.removeItem("correctKey")
         if (sessionStorage.getItem("status") === "En proceso") {
             sessionStorage.setItem("status", "Retirada")
-
-        } else {
+            
+        }else{
             sessionStorage.setItem("status", "Devuelta")
         }
         location.href = "../selectorItems.html"
-    } else {
-        modal.style.display = "block";
-        modalmess.textContent ="Por favor, utiliza el qr que te proporcionamos!!"
-    }
+     }else{
+        modal.style.display = "block"
+     }
 })
 closeModal.addEventListener("click", close)
 
@@ -48,14 +47,11 @@ function startTimer(duration, display, callback) {
         minutes = Math.floor(timer / 60);
         seconds = timer % 60;
 
-    
         minutes = minutes < 10 ? "0" + minutes : minutes;
         seconds = seconds < 10 ? "0" + seconds : seconds;
 
-      
         display.textContent = minutes + ":" + seconds;
 
-    
         if (--timer < 0) {
             clearInterval(interval);
             callback(); 
@@ -63,12 +59,9 @@ function startTimer(duration, display, callback) {
     }, 1000);
 }
 
-
 function onTimerFinish() {
-     modalmess.textContent ="Se ha acabado tu tiempo, por favor vuelve a seleccionar";
-if (closeModal) {
-    location.href = "../selectorItems.html";
-} 
+    alert("Se ha acabado tu tiempo, por favor vuelve a seleccionar");
+    location.href = "../selectorItems.html"; 
 }
 
 
@@ -77,43 +70,45 @@ if (closeModal) {
 async function onTimer() {
     loadingScreen.style.display = "flex";
 
-    let data = await fetch("https://secure-track-db.vercel.app/computers/time",
-        {
-            method: "POST",
-            mode: "cors",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                token: JSON.parse(res).tokenId,
-            }),
-        }
-    )
-    loadingScreen.style.display = "none";
+let data = await fetch("https://secure-track-db.vercel.app/computers/time",
+{
+    method: "POST",
+    mode: "cors",
+    headers: {
+        "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+        token: JSON.parse(res).tokenId,
+    }),
+}
+)
+loadingScreen.style.display = "none";
 
-    if ((await data).status === 200) {
-        let horario = await data.json();
-        console.log(horario)
-        horario = 300 - horario.time
-        console.log(horario)
+if ((await data).status === 200) {
+    let horario = await data.json();
+    console.log(horario)
+    horario = 300 - horario.time
+    startTimer(horario, timerDisplay, ()=>{onTimer(); location.href = "../selectorItems.html"});
+}else if ((await data).status === 201) {
+    
 
-        timer.innerText = horario
-
-        startTimer(horario, timerDisplay, () => { onTimer(); location.href = "../selectorItems.html" });
-
-    } else {
-        if (parseInt(res.tokenId) === null) {
-            location.href = "../selectorItems.html"
-        }
+    let horario = await data.json();
+    timer.innerText = horario
+    
+}else{
+    if (parseInt(res.tokenId)=== null) {
+          location.href = "../selectorItems.html"
     }
+}
 
 }
 
 // Iniciar el temporizador con 5 minutos
 window.onload = async function () {
-    if (!user) {
-        location.href = "../accesodenegado.html"
-    }
+if (!user) {
+location.href = "../accesodenegado.html"
+}
+onTimer()
 };
 
 let img = document.createElement("img")
