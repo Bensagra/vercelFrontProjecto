@@ -21,10 +21,15 @@ const res = await response.json()
 console.log(res.status);
 if (response.status === 200) {
     sessionStorage.setItem("status", res.status);
-    if (res.status === "Retirada") {
-        confirmButton.style.filter = "brightness(50%)"
-    } else {
-        returnButton.style.filter = "brightness(50%)"
+    let user = sessionStorage.getItem("occupation")
+    if (user === "Estudiante") {
+
+
+        if (res.status === "Retirada") {
+            confirmButton.style.filter = "brightness(50%)"
+        } else {
+            returnButton.style.filter = "brightness(50%)"
+        }
     }
 }
 
@@ -154,18 +159,18 @@ function checkAllSelected() {
     }
 
     if (estado === "Retirada") {
-        returnButton.setAttribute("disabled", true);
-        returnButton.style.cursor= "not-allowed";
-        confirmButton.setAttribute("disabled", false);
-         
-    } else if (estado === "Devuelta") {
         returnButton.setAttribute("disabled", false);
-        confirmButton.setAttribute("disabled", true);;
-        confirmButton.style.cursor= "not-allowed"
-    } else {
+        confirmButton.style.cursor = "not-allowed";
+        confirmButton.setAttribute("disabled", true);
 
-        returnButton.disabled = false;
-        confirmButton.disabled = false;
+    } else {
+        returnButton.setAttribute("disabled", true);
+        confirmButton.setAttribute("disabled", false);;
+        returnButton.style.cursor = "not-allowed"
+
+
+
+
     }
 
 
@@ -175,8 +180,10 @@ confirmButton.addEventListener("click", () => requestComputer());
 returnButton.addEventListener("click", () => returnComputer());
 
 async function requestComputer() {
+    let user = sessionStorage.getItem("occupation")
+
     let status = sessionStorage.getItem("status")
-    if (status === "Retirada") {
+    if (status === "Retirada" && user === "Estudiante") {
         return
     }
     console.log(
