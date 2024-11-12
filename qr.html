@@ -6,8 +6,8 @@
     <title>Secure Track QR</title>
     <link rel="stylesheet" href="css/general.css">
     <link rel="stylesheet" href="css/footer.css">
-    <link rel="stylesheet" href="css/qr.css">
     <link rel="stylesheet" href="css/config.css">
+    <link rel="stylesheet" href="css/qr.css">
     <link rel="stylesheet" href="css/modal.css">
     <link rel="stylesheet" href="css/animacion.css">
     <link rel="icon" type="image/png" href="img/logo.png">
@@ -49,6 +49,7 @@
             <img id="image-user" style="display: none;" alt="Profile Photo" />
          </div>
     </header>
+ 
     <section id="userSettings" class="user-settings">
         <button class="close-btn" id="closeBtn">&times;</button> 
         <div class="information">
@@ -60,13 +61,21 @@
             </div>
     
             <details>
-                <summary class="ver-transecciones">Ver mis transacciones pasadas</summary>
-                <p class="p-transecciones" id="transacciones">Aquí aparecerán sus transacciones</p>
+                <summary id="summary" class="ver-transecciones">Ver mis transacciones pasadas</summary>
+                <div class="p-transecciones" id="transacciones"></div>
             </details>
            <div class="ambos">
+    
+        
     <div class="div-button">
-        <button class="nfc" id="nfc"> registrar nfc</button>
+        <div class="b" style="margin: 2%;  letter-spacing: 2px;">
+        <button class="nfc" id="nfc"> REGISTRAR NFC</button>
     </div>
+    <div class="a" style="margin: 2%;">
+        <a href="asing.html" class="asignar nfc"  id="asignar" style="display: none; letter-spacing: 2px;"> ASIGNAR COMPU </a>
+    </div>
+    </div>
+    
             <div class="div-log">
                 <button class="Btn" id="logoutBtn">
                     <div class="sign">
@@ -88,9 +97,11 @@
                     <div class="qr" id="qr"></div>
                 </div>
             </div>
-        
-            <p id="text" class="text"></p>
-            <div class="text" id="timer">El QR estará disponible por <span id="time">5:00</span></div>
+            
+            <p id="text" class="textoQr"></p>
+            <div class="textQr" id="hola"></div>
+            <p style="color: red;" id="error"></p>
+
         </div>
         <div class="div-button">
             <button id="finalizar" class="button cancelar" aria-label="Seleccionar otra opción">Finalizar</button>
@@ -98,7 +109,7 @@
         <div class="modal" id="modal">
             <div class="modal-content">
                 <span class="close-button" id="closeModal">&times;</span>
-                <p id="modal-message">Por favor, utiliza el qr que te proporcionamos!!</p>
+                <p id="modal-message"></p>
                 <div class="div-img">
                     <img src="img/logo.png" alt="logo" height="80px" width="80px">
                 </div>

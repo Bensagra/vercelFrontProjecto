@@ -9,7 +9,9 @@ const username = sessionStorage.getItem("username")
 const p_user = document.getElementById("dni")
 const nfc = document.getElementById("nfc")
 const user = sessionStorage.getItem("userId")
-const datalist = document.getElementById("transacciones")
+const asignar = document.getElementById("asignar")
+const occupation = sessionStorage.getItem("occupation")
+
 
 
     if (profilePhotoURL) {
@@ -19,12 +21,13 @@ const datalist = document.getElementById("transacciones")
     }
     profileImage.addEventListener("click", mostrarConfiguraciones);
 
-    function mostrarConfiguraciones() {
-        if (userSettings.style.display === "none") {
-            userSettings.style.display = "block"; 
-        } else {
-            userSettings.style.display = "none"; 
-        }
+        function mostrarConfiguraciones() {
+            userSettings.classList.toggle("active");
+        //       if (userSettings.style.display === "none") {
+        //     userSettings.style.display = "block"; 
+        // } else {
+        //     userSettings.style.display = "none"; 
+        // }
     }
 closeDiv.addEventListener("click", close)
 
@@ -61,33 +64,54 @@ sessionStorage.setItem("correctKey", JSON.stringify({tokenId:user,slots:[]}))
 location.href="./qr.html"
  }
 
- async function cargarTransacciones() {
-    try {
-        const response = await fetch('https://secure-track-db.vercel.app/user/transactions', {
-            method: "GET",
-            mode: "cors",
-            body: JSON.stringify({ userId: user }),
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
-        const transacciones = await response.json();
-        const datalist = document.getElementById("transacciones");
-        datalist.innerHTML = '';
+ document.addEventListener("DOMContentLoaded", () => {
+    const summary = document.getElementById("summary");
+    const datalist = document.getElementById("transacciones"); 
 
-        if (!transacciones === null) {
-            transacciones.forEach(transaccion => {
-                const transaccionP = document.createElement("p");
-                transaccionP.classList.add("transaction-item"); 
-                transaccionP.textContent = `hora: ${transaccion.data.token.createdAt} - Aula: ${data.token.cart.room.roomNumber}`; 
-                datalist.appendChild(transaccionP);
+    summary.addEventListener("click", cargarTransacciones);
+
+    async function cargarTransacciones() {
+        try {
+            console.log("User ID:", user);
+
+            const response = await fetch('https://secure-track-db.vercel.app/users/transactions', {
+                method: "POST",
+                mode: "cors",
+                body: JSON.stringify({ userId: user }), 
+                headers: {
+                    "Content-Type": "application/json",
+                },
             });
-        } else {
-           console.log("no hay") 
-        }
-      
 
-    } catch (error) {
-        location.href = "./error500.html";
+            if (!response.ok) {
+                throw new Error("Error en la solicitud: " + response.statusText);
+            }
+
+            const transacciones = await response.json();
+            console.log(transacciones);
+
+            datalist.innerHTML = ''; 
+            if (transacciones.length > 0) {
+                transacciones.forEach(transaccion => {
+                    const transaccionP = document.createElement("p");
+                    transaccionP.textContent = `Hora: ${transaccion.data.token.createdAt} - Aula: ${transaccion.data.token.cart.room.roomNumber}`;
+                    datalist.appendChild(transaccionP);
+                });
+            } else {
+                const noTransaccionP = document.createElement("p");
+                noTransaccionP.textContent = "No hay transacciones disponibles"; 
+                datalist.appendChild(noTransaccionP);
+            }  
+        } catch (error) {
+            console.error("Error:", error);
+            datalist.innerHTML = '<p>Error al cargar las transacciones, por  favor intente mas tarde.</p>';
+        }
     }
-}
+});
+
+ if ( occupation === "Profesor") {
+    asignar.style.display="block"
+ } else {
+  asignar.style.display="none"
+ }
+ 
