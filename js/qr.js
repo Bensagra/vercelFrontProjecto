@@ -68,13 +68,7 @@ async function onTimerFinish() {
 }
 
 
-document.addEventListener("DOMContentLoaded", () => {
-    try {
-        parseInt(parsedRes?.tokenId);
-    } catch (error) {
-        onTimer()
-    }
-});
+
 async function onTimer() {
     try {
         loadingScreen.style.display = "flex";
@@ -124,8 +118,13 @@ window.onload = async function () {
         img.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(parsedRes?.tokenId)}`;
         qr.appendChild(img);
 
-        text.innerText = `El slot para el retiro es el ${parsedRes?.slots}`;
-        onTimer();
+
+        try {
+            parseInt(parsedRes?.tokenId);
+        } catch (error) {
+            onTimer()
+            text.innerText = `El slot para el retiro es el ${parsedRes?.slots}`;
+        }
     } catch (error) {
         console.error("Error on window load:", error);
     } finally {
