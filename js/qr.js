@@ -1,18 +1,18 @@
-    const text = document.getElementById("text");
-    const res = sessionStorage.getItem("correctKey");
-    const user = sessionStorage.getItem("userId");
-    const qr = document.getElementById("qr");
-    const timerDisplay = document.getElementById("time");
-    const finalizar = document.getElementById("finalizar");
-    const modal = document.getElementById("modal");
-    const closeModal = document.getElementById("closeModal");
-    const modalMessage = document.getElementById("modal-message");
-    const loadingScreen = document.getElementById("loadingScreen");
+const text = document.getElementById("text");
+const res = sessionStorage.getItem("correctKey");
+const user = sessionStorage.getItem("userId");
+const qr = document.getElementById("qr");
+const timerDisplay = document.getElementById("time");
+const finalizar = document.getElementById("finalizar");
+const modal = document.getElementById("modal");
+const closeModal = document.getElementById("closeModal");
+const modalMessage = document.getElementById("modal-message");
+const loadingScreen = document.getElementById("loadingScreen");
 
-    const parsedRes = res ? JSON.parse(res) : null;
+const parsedRes = res ? JSON.parse(res) : null;
 
-    // Place the rest of your JavaScript code here...
- 
+// Place the rest of your JavaScript code here...
+
 
 finalizar.addEventListener("click", async () => {
     console.log(parsedRes.tokenId)
@@ -23,15 +23,15 @@ finalizar.addEventListener("click", async () => {
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({ token: parsedRes.tokenId }) 
+            body: JSON.stringify({ token: parsedRes.tokenId })
         });
 
-       let info = await data.json()
-       if (info.verificado) {
-        location.href = "./selectorItems.html"
-       }else{
-        document.getElementById("error").innerText = "El qr no ha sido utilizado"
-       }
+        let info = await data.json()
+        if (info.verificado) {
+            location.href = "./selectorItems.html"
+        } else {
+            document.getElementById("error").innerText = "El qr no ha sido utilizado"
+        }
     } catch (error) {
         console.error("Error fetching data:", error);
     }
@@ -52,7 +52,7 @@ function startTimer(duration, display, callback) {
         minutes = minutes < 10 ? "0" + minutes : minutes;
         seconds = seconds < 10 ? "0" + seconds : seconds;
 
-        display.innerText =   "El QR estará disponible por " + minutes + ":" + seconds;
+        display.innerText = "El QR estará disponible por " + minutes + ":" + seconds;
 
         if (--timer < 0) {
             clearInterval(interval);
@@ -62,13 +62,19 @@ function startTimer(duration, display, callback) {
 }
 
 async function onTimerFinish() {
-   
+
     modalMessage.textContent = "Se ha acabado tu tiempo, por favor vuelve a seleccionar";
-    modal.style.display = "block"; 
+    modal.style.display = "block";
 }
 
 
-document.addEventListener("DOMContentLoaded", onTimer);
+document.addEventListener("DOMContentLoaded", () => {
+    try {
+        parseInt(parsedRes?.tokenId);
+    } catch (error) {
+        onTimer()
+    }
+});
 async function onTimer() {
     try {
         loadingScreen.style.display = "flex";
@@ -89,19 +95,19 @@ async function onTimer() {
             console.log(horario);
 
             let hola = document.getElementById("hola");
-            hola.innerText = `El QR estará disponible por`    
+            hola.innerText = `El QR estará disponible por`
 
             startTimer(300 - horario.time, hola, () => {
                 onTimerFinish();
             });
         } else {
-                location.href = "../selectorItems.html";
-            
+            location.href = "../selectorItems.html";
+
         }
     } catch (error) {
         console.error("Error in onTimer:", error);
         let hola = document.getElementById("hola");
-        hola.innerText = `error deel servidor`  
+        hola.innerText = `error deel servidor`
         loadingScreen.style.display = "none";
     }
 }
